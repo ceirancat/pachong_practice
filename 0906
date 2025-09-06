@@ -1,0 +1,25 @@
+
+from bs4 import BeautifulSoup
+import requests
+
+
+url="https://www.books.com.tw/web/sys_saletopb/books/?attribute=30"
+website=requests.get(url=url)
+website.encoding="utf-8"
+soup=BeautifulSoup(website.text,"html.parser")
+divs=soup.find_all("div",class_="type02_bd-a")
+
+for i,div in enumerate(divs):
+    
+    try:
+        h4=div.find("h4")
+        try:
+            a=h4.find("a")
+            print(str(i+1)+". "+a.text)
+        except:
+            print("You forgot a <h4> tag!")
+            continue
+    except:
+        print("You forgot a <a> tag!")
+        continue
+    
