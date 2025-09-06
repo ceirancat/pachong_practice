@@ -1,0 +1,41 @@
+
+from bs4 import BeautifulSoup
+import requests
+
+
+url="https://www.books.com.tw/web/sys_saletopb/books/?attribute=30"
+website=requests.get(url=url)
+website.encoding="utf-8"
+soup=BeautifulSoup(website.text,"html.parser")
+divs=soup.find_all("div",class_="type02_bd-a")
+alist=[]
+for i,div in enumerate(divs):
+    while i<=49:
+        try:
+            h4=div.find("h4")
+            try:
+                a=h4.find("a")
+                alist.append(a.text)
+            except:
+                print("You forgot a <h4> tag!")
+                continue
+        except:
+            print("You forgot a <a> tag!")
+            continue
+uls=soup.find_all("ul",class_="msg")
+a2list=[]
+for i,div in enumerate(uls):
+   while i <=49: 
+    try:
+        li=div.find("li")
+        try:
+            a2=li.find("a")
+            a2list.append(a2.text)
+        except:
+                print("You forgot a <a> tag!")
+    except:
+        print("You forgot a <li> tag!")
+        continue
+    
+for i in range(0,50):
+    print(str(i+1)+". "+ alist[i]+" 作者:"+a2list[i])    
