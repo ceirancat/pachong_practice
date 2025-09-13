@@ -1,41 +1,41 @@
-
 from bs4 import BeautifulSoup
 import requests
 
+url = "https://www.books.com.tw/web/sys_saletopb/books/?attribute=30"
+website = requests.get(url)
+website.encoding = "utf-8"
+soup = BeautifulSoup(website.text, "html.parser")
+divs = soup.find_all("div", class_="type02_bd-a")
+uls = soup.find_all("ul", class_="msg")
 
-url="https://www.books.com.tw/web/sys_saletopb/books/?attribute=30"
-website=requests.get(url=url)
-website.encoding="utf-8"
-soup=BeautifulSoup(website.text,"html.parser")
-divs=soup.find_all("div",class_="type02_bd-a")
-alist=[]
-for i,div in enumerate(divs):
-    while i<=49:
-        try:
-            h4=div.find("h4")
-            try:
-                a=h4.find("a")
-                alist.append(a.text)
-            except:
-                print("You forgot a <h4> tag!")
-                continue
-        except:
-            print("You forgot a <a> tag!")
-            continue
-uls=soup.find_all("ul",class_="msg")
-a2list=[]
-for i,div in enumerate(uls):
-   while i <=49: 
-    try:
-        li=div.find("li")
-        try:
-            a2=li.find("a")
-            a2list.append(a2.text)
-        except:
-                print("You forgot a <a> tag!")
-    except:
-        print("You forgot a <li> tag!")
-        continue
+# 只取前50筆或資料長度較小時以資料長度為主
+num_items = min(50, len(divs), len(uls))
+
+alist = []
+a2list = []
+
+for i in range(num_items):
+    # 書名
+    h4 = divs[i].find("h4")
+    if h4:
+        a = h4.find("a")
+        if a:
+            alist.append(a.text.strip())
+        else:
+            alist.append("No title found")
+    else:
+        alist.append("No h4 found")
     
-for i in range(0,50):
-    print(str(i+1)+". "+ alist[i]+" 作者:"+a2list[i])    
+    # 作者
+    li = uls[i].find("li")
+    if li:
+        a2 = li.find("a")
+        if a2:
+            a2list.append(a2.text.strip())
+        else:
+            a2list.append("No author found")
+    else:
+        a2list.append("No li found")
+
+for i in range(num_items):
+    print(f"{i+1}. {alist[i]} 作者: {a2list[i]}")
