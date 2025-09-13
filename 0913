@@ -1,0 +1,25 @@
+import requests,json
+from bs4 import BeautifulSoup
+
+payLoad={
+    "SearchType":"S",
+    "Lang":"TW",
+    "StartStation":"NanGang",
+    "EndStation":"ZuoYing",
+    "OutWardSearchDate":"2025/09/18",
+    "OutWardSearchTime":"15:30",
+    "ReturnSearchDate":"2025/09/18",
+    "ReturnSearchTime":"15:30",
+    "DiscountType":None
+    }
+
+req=requests.post("https://www.thsrc.com.tw/TimeTable/Search",payLoad)
+soup=BeautifulSoup(req.text,"html.parser")
+train_data=json.loads(soup.text)
+
+for i in train_data["data"]["DepartureTable"]["TrainItem"]:
+    trainNo=i["TrainNumber"]
+    dtime=i["DepartureTime"]
+    destime=i["DestinationTime"]
+    print("車次:"+trainNo,"出發時間:"+dtime,"抵達時間"+dtime)
+
